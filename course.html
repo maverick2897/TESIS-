@@ -172,54 +172,35 @@
       );
 
       //actualizaciones
-      var i = 0;
-      const q = query(collection(db, "data"));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
+      var today = new Date();
+    //var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var minutes = String(today.getMinutes()).padStart(2, '0');
+    var time = today.getHours() + ":" + minutes;
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    today = dd + '/' + mm + '/' + yyyy;
+    console.log(time)
+
+    //actualizaciones   sacar desde 1min atras y bandera para que no entre en el if
+    var i = 0;
+    const q = query(collection(db, "data"), where("date", "==", today), where("hourAux", ">=", time));//, where("hour", ">", time));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            console.log("New city: ", change.doc.data());
-            addData(myChart, change.doc.data().date, change.doc.data().x);
-          }
-          if (change.type === "modified") {
-            console.log("Modified city: ", change.doc.data());
-          }
-          if (change.type === "removed") {
-            console.log("Removed city: ", change.doc.data());
-          }
-          i = i + 1;
+            if (change.type === "added") {
+                console.log("New city: ", change.doc.data());
+                addData(myChart, change.doc.data().hour, change.doc.data().x);
+            }
+            if (change.type === "modified") {
+                console.log("Modified city: ", change.doc.data());
+            }
+            if (change.type === "removed") {
+                console.log("Removed city: ", change.doc.data());
+            }
+            i = i + 1;
         });
-      });
-      function clear(i) {
-        console.log("mnb");
-        console.log(i);
-        while (i > 1) {
-          i = i - 1;
-          removeData(myChart);
-        }
-
-      }
-      const qs = query(collection(db, "data"), orderBy("date", "asc"), limit(10));
-      const querySnapshot = await getDocs(qs);
-      clear(i);
-
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        addData(myChart, doc.data().date, doc.data().x);
-      });
-
-
-
-      /*
-      //funcion nueva
-      const qs = query(collection(db, "data"), limit(10));
-      qs.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          addData(myChart, doc.data().y, doc.data().x)
-          //datax.push(doc.data().x)
-          //dataTiempo.push(doc.data().y)
-      });
-  */
+    });
     </script>
     <div class="container">
       <div class="heading_container">
