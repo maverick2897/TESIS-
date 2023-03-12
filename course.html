@@ -167,7 +167,8 @@
       var today = new Date();
       //var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
       var minutes = String(today.getMinutes()).padStart(2, '0');
-      var time = today.getHours() + ":" + minutes;
+      var time = String(today.getHours()).padStart(2, '0') + ":" + minutes;
+      
       var dd = String(today.getDate()).padStart(2, '0');
       var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
       var yyyy = today.getFullYear();
